@@ -13,13 +13,13 @@ t = ni.Task()
 
 freq = int(1000)
 spc = int(freq)
-trig_num = int(10*spc)
+trig_num = int(spc/20)
 t.ai_channels.add_ai_voltage_chan('Dev1/ai0')
 time_arr = np.linspace(0, spc/freq, spc)
 
 def every_n_cb(task_handle, every_n_samples_event_type,
 		number_of_samples, callback_data):
-	samples = t.read(number_of_samples_per_channel=spc)
+	samples = t.read(number_of_samples_per_channel=trig_num)
 	data = []
 	for i in range(len(samples)):
 		data.append({
@@ -34,7 +34,7 @@ t.timing.cfg_samp_clk_timing(
 		sample_mode=ni.constants.AcquisitionType.CONTINUOUS,
 		samps_per_chan=trig_num
 		)
-t.register_every_n_samples_acquired_into_buffer_event(spc,every_n_cb)
+t.register_every_n_samples_acquired_into_buffer_event(trig_num,every_n_cb)
 
 @app.route("/")
 def render():

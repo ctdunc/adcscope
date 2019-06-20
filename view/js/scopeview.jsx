@@ -29,6 +29,7 @@ export default class ScopeView extends Component {
 				>
 					<VictoryLine
 						data={this.state.data}
+						style={{data:{strokeWidth:1}}}
 						x="time"
 						y="volt"
 					/>

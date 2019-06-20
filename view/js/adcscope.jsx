@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import control from "./ctl/control";
 import ScopeView from "./scopeview";
+
 import "../css/main.css";
 
 export default class ADCScope extends Component {
@@ -15,7 +15,6 @@ export default class ADCScope extends Component {
 					<ScopeView/>
 				</div>
 				<div className="right-20">
-					<control />
 				</div>
 			</div>
 		);
