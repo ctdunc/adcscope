@@ -40,7 +40,7 @@
     "react-dom": "^16.8.6",
     "socket.io": "^2.2.0",
     "victory": "^32.2.3",
-    "webpack": "^4.34.0"
+    "webpack": "^4.35.0"
   },
   "devDependencies": {
     "webpack-cli": "^3.3.4"
