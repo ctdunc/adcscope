@@ -31,15 +31,20 @@
   "dependencies": {
     "@babel/core": "^7.1.6",
     "@babel/preset-react": "^7.0.0",
+    "@vx/group": "0.0.189",
+    "@vx/mock-data": "0.0.189",
+    "@vx/scale": "0.0.189",
+    "@vx/shape": "0.0.189",
     "babel-loader": "^8.0.4",
     "css-loader": "^3.0.0",
+    "d3": "^5.9.2",
     "eslint": "^5.16.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "mini-css-extract-plugin": "^0.7.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "socket.io": "^2.2.0",
-    "victory": "^32.2.3",
+    "vx": "0.0.1",
     "webpack": "^4.35.0"
   },
   "devDependencies": {

@@ -1,8 +1,6 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
-import nidaqmx as ni
 import numpy as np
-import bson
 import datetime
 import eventlet
 
