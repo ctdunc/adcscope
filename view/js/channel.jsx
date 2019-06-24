@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import io from "socket.io-client"
-import LinePath from '@vx/shape';
+import { LinePath } from '@vx/shape';
 import { scaleTime, scaleLinear } from '@vx/scale';
 import { extent, max } from 'd3-array';
 
@@ -17,7 +17,7 @@ import { extent, max } from 'd3-array';
 const t = d => d.time
 const v = d => d.volt
 
-export class Channel extends LinePath{
+export default class Channel extends LinePath{
 	constructor(props,context){
 		super(props,context);
 		this.state = {

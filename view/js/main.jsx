@@ -12,7 +12,7 @@ export default class ADCScope extends Component {
 		return(
 			<div className="container">
 				<div className="left-80">
-					<ScopeView w={100} h={100}/>
+					<Scope w={1000} h={1000}/>
 				</div>
 				<div className="right-20">
 				</div>

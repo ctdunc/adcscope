@@ -1,54 +1,29 @@
 import React, { Component } from "react";
 import io from "socket.io-client";
-import { Group } from "@vx/group";
-import Channel from "./channel";
+import { ParentSize }from "@vx/responsive";
+import ChannelLine from "./channel-line";
 
 //TODO:
 //Take in channels as prop from contro
 
-export default class ScopeView extends Component {
+var socket = io.connect("http://"+document.domain+":"+location.port);
+
+export default class Scope extends Component {
 	constructor(props, context){
 		super(props,context);
-		this.state = {
-			data : [],
-		}
-
-		socket.on("trace", (data) => {this.handleUpdate(data)});
 	}
-	
-	handleUpdate(data){
-		console.log(data);
-		this.setState({ 
-				data: data
-				}
-		);
-	}
-	
 
 	render(){
-
-		const tScale  = scaleLinear({
-			range:	[0, this.props.w],
-			domain:	extent(this.state.data, t)
-		});
-		const vScale = scaleLinear({
-			range: [0,this.props.h],
-			domain: [0,max(this.state.data, v)]
-		});
-			
-		const d = this.state.data;
+		const { width, height } = this.props;
 		return(
-			<svg width={this.props.w} height={this.props.h}>
-				<Group>
-					<LinePath
-						data={d}
-						x={d => tScale(t(d))}
-						y={d => vScale(v(d))}
-						stroke="#000000"
-						strokeWidth={1}
-					/>
-				</Group>
-			</svg>
+				<ParentSize className="left-80">
+				{({width: w, height:h}) => {
+					return(
+						<ChannelLine w={w} h={h} socket={socket} vScale={1}/>
+					);
+							   }
+				}
+				</ParentSize>
 		);
 	}
 }
