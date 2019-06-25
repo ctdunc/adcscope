@@ -10,9 +10,11 @@ app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO()
 socketio.init_app(app,async_mode='eventlet',message_queue="redis://")
 eventlet.monkey_patch()
+
 @app.route("/")
 def render():
     return render_template('index.html')
+
 
 if __name__ == '__main__':
     socketio.run(app)
