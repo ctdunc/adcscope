@@ -35,7 +35,6 @@ export default class ChannelLine extends Component {
 			domain: [min(d, v),max(d, v)]
 		});
 		return(
-				<svg width={this.props.w} height={this.props.h}>
 					<Group>
 						<LinePath
 							data={d}
@@ -45,7 +44,6 @@ export default class ChannelLine extends Component {
 							strokeWidth={1}
 							/>
 					</Group>
-				</svg>
 		      );
 	}
 }

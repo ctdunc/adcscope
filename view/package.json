@@ -33,6 +33,7 @@
     "@babel/preset-react": "^7.0.0",
     "@vx/group": "0.0.189",
     "@vx/mock-data": "0.0.189",
+    "@vx/responsive": "0.0.189",
     "@vx/scale": "0.0.189",
     "@vx/shape": "0.0.189",
     "babel-loader": "^8.0.4",
