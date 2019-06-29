@@ -24,15 +24,15 @@ const channels = {
 	12:	{ vScale: 1, enabled: true}
 }
 
+const chan_keys = Object.keys(channels);
 //series data for testing lines
 
 export default class Scope extends Component {
 	constructor(props, context){
 		super(props,context);
-		this.state = {channels, data:[]};
+		this.state = {channels};
 
 		this.toggleChannel = this.toggleChannel.bind(this);
-		//socket.on("trace", (d)=>{this.handleUpdate(d)});
 	}
 	
 	toggleChannel(e){
@@ -42,46 +42,43 @@ export default class Scope extends Component {
 		this.setState({
 			channels:  ch
 		});
-	}
-	
-	handleUpdate(d){
-		this.setState({
-			data: d
-		});
+		console.log(this.state.channels)
 	}
 
 	render(){
-		const { width, height } = this.props;
-
+		const enabledChans = this.state.channels;
+		
+		console.log(enabledChans);
 		return(
 			<div className="grid-container">
 				<div className="dashboard">
-				{Object.keys(channels).map((channel)=> {return(
-					<label className="channel-container" key={channel}>{channel}
-						<input 
-							type="checkbox" 
-							name={channel}
-							onChange={this.toggleChannel} 
-							checked={this.state.channels[channel].enabled}
-						/>
-					</label>
-				);})}
+					{chan_keys.map((channel)=> {
+						return(
+							<label className="channel-container" key={channel}>{channel}
+								<input 
+									type="checkbox" 
+									name={channel}
+									onChange={this.toggleChannel} 
+									checked={this.state.channels[channel].enabled}
+								/>
+							</label>
+						);
+					})}
 				</div>
 				<div className="readout">
-				<ParentSize className="graph-container">
-					{({width:w, height: h}) => {
-						return(
-							<Channels
-								chans={channels}
-								width={w}
-								height={h}
-							/>
-						)
-					}}
-				</ParentSize>
+					<ParentSize className="graph-container">
+						{({width:w, height: h}) => {
+							return(
+								<Channels
+									chans={enabledChans}
+									width={w}
+									height={h}
+								/>
+							)
+						}}
+					</ParentSize>
 				</div>
 			</div>
 		);
 	}
 }
-

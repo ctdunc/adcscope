@@ -59,18 +59,25 @@ export default class Channels extends Component {
 			});
 		return(
 			<svg width={this.props.width} height={this.props.height}>
-			{Object.keys(this.props.chans).map(key => {
-				return(
-					<Group key={key}>
-						<LinePath
-							data={data[key]}
-							x={d => xScale(t(d))}
-							y={d => yScale(v(d))}
-							stroke="#000"
-							strokeWidth={2}
-						/>
-					</Group>
-				);})}
+				<rect height={this.props.height} width={this.props.width} fill="#242424"/>
+				{Object.keys(this.props.chans).map(key => {
+					if(this.props.chans[key].enabled==true){
+						return(
+							<Group key={key}>
+								<LinePath
+									data={data[key]}
+									x={d => xScale(t(d))}
+									y={d => yScale(v(d))}
+									stroke="#FFFFFF"
+									strokeWidth={2}
+								/>
+							</Group>
+						);
+					}
+					else{
+						return;
+					}
+				})}
 			</svg>
 		);
 	}
