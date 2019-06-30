@@ -16,7 +16,7 @@ while True:
     data = np.sin(t_series)
     emit=[]
     for j in range(13):
-        noise = np.random.rand(len(data))
+        noise = np.random.rand(len(data))/100
         emit.append([{'volt': data[i]+noise[i], 'time': t_series[i]+j/4} for i in range(len(data))])
 
     socketio.emit('trace',emit)

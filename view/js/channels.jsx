@@ -7,21 +7,21 @@ import io from "socket.io-client";
 
 const socket = io.connect("http://"+document.domain+":"+location.port);
 
-var dt = {
-0: [{volt:0,time:0},{volt:1,time:1}],
-1: [{volt:0,time:0},{volt:1,time:1}],
-2: [{volt:0,time:0},{volt:1,time:1}],
-3: [{volt:0,time:0},{volt:1,time:1}],
-4: [{volt:0,time:0},{volt:1,time:1}],
-5: [{volt:0,time:0},{volt:1,time:1}],
-6: [{volt:0,time:0},{volt:1,time:1}],
-7: [{volt:0,time:0},{volt:1,time:1}],
-8: [{volt:0,time:0},{volt:1,time:1}],
-9: [{volt:0,time:0},{volt:1,time:1}],
-10: [{volt:0,time:0},{volt:1,time:1}],
-11: [{volt:0,time:0},{volt:1,time:1}],
-12: [{volt:0,time:0},{volt:1,time:1}]
-};
+var dt = [
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}],
+[{volt:0,time:0},{volt:1,time:1}]
+];
 
 function handleUpdate(data){
 	dt= data;
@@ -55,17 +55,21 @@ export default class Channels extends Component {
 		});
 		const yScale = scaleLinear({
 			range: [this.props.height, 0],
-			domain: [min(dat,v), max(dat, v)]
+			domain: [-50, 50] // set voltage range to be objectively +/- 50V, we will scale incoming data relative to this threshold and display that scale.
 			});
 		return(
 			<svg width={this.props.width} height={this.props.height}>
 				<rect height={this.props.height} width={this.props.width} fill="#242424"/>
 				{Object.keys(this.props.chans).map(key => {
 					if(this.props.chans[key].enabled==true){
+						const scalar = this.props.chans[key].vScale;
+						const toRender = data[key].map(el => {
+							return({time: el.time, volt: el.volt*scalar})
+						});
 						return(
 							<Group key={key}>
 								<LinePath
-									data={data[key]}
+									data={toRender}
 									x={d => xScale(t(d))}
 									y={d => yScale(v(d))}
 									stroke="#FFFFFF"

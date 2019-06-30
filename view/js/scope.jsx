@@ -2,27 +2,51 @@ import React, { Component } from "react";
 import io from "socket.io-client";
 import { ParentSize }from "@vx/responsive";
 import Channels from "./channels";
-
+import Slider from "@material-ui/lab/Slider";
 //TODO:
 //Take in channels as prop from contro
 // const socket = io.connect("http://"+document.domain+":"+location.port);
 
 //constant channels for testing.
-const channels = { 
-	0:	{ vScale: 1, enabled: true},
-	1:	{ vScale: 1, enabled: true},
-	2:	{ vScale: 1, enabled: true},
-	3:	{ vScale: 1, enabled: true},
-	4:	{ vScale: 1, enabled: true},
-	5:	{ vScale: 1, enabled: true},
-	6:	{ vScale: 1, enabled: true},
-	7:	{ vScale: 1, enabled: true},
-	8:	{ vScale: 1, enabled: true},
-	9:	{ vScale: 1, enabled: true},
-	10:	{ vScale: 1, enabled: true},
-	11:	{ vScale: 1, enabled: true},
-	12:	{ vScale: 1, enabled: true}
-}
+const channels = [ 
+		{ vScale: 1.2, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true},
+		{ vScale: 1, enabled: true}
+]
+
+const scales = [
+	{value: 0.00001},
+	{value: 0.00002},
+	{value: 0.00005},
+	{value: 0.00010},
+	{value: 0.00050},
+	{value: 0.00100},
+	{value: 0.00200},
+	{value: 0.00500},
+	{value: 0.01000},
+	{value: 0.02000},
+	{value: 0.05000},
+	{value: 0.10000},
+	{value: 0.20000},
+	{value: 0.50000},
+	{value: 1},
+	{value: 2},
+	{value: 5},
+	{value: 10},
+	{value: 20},
+	{value: 50}
+]
+
 
 const chan_keys = Object.keys(channels);
 //series data for testing lines
@@ -42,26 +66,43 @@ export default class Scope extends Component {
 		this.setState({
 			channels:  ch
 		});
-		console.log(this.state.channels)
 	}
 
+	scaleChannel(channel, e, newValue){
+		let ch = this.state.channels;
+		ch[channel].vScale = newValue;
+		this.setState({
+			channels: ch
+		});
+	}
+	
 	render(){
 		const enabledChans = this.state.channels;
 		
-		console.log(enabledChans);
 		return(
 			<div className="grid-container">
 				<div className="dashboard">
 					{chan_keys.map((channel)=> {
+						let vs = this.state.channels[channel].vScale;
 						return(
-							<label className="channel-container" key={channel}>{channel}
+							<div className="channel-container" key={channel}>
+								{channel}
+								<Slider 
+									value={vs}
+									valueLabelDisplay="auto"
+									onChange={this.scaleChannel.bind(this,channel)}
+									min={0}
+									max={50}
+									marks={scales}
+									step={null}
+								/>
 								<input 
 									type="checkbox" 
 									name={channel}
 									onChange={this.toggleChannel} 
 									checked={this.state.channels[channel].enabled}
 								/>
-							</label>
+							</div>
 						);
 					})}
 				</div>
