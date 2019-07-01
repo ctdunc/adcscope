@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Group } from '@vx/group';
 import { LinePath } from '@vx/shape';
 import { scaleTime, scaleLinear } from '@vx/scale';
+import { Grid } from '@vx/grid';
 import { extent, max, min } from 'd3-array';
 import io from "socket.io-client";
 
@@ -55,14 +56,21 @@ export default class Channels extends Component {
 		});
 		const yScale = scaleLinear({
 			range: [this.props.height, 0],
-			domain: [-50, 50] // set voltage range to be objectively +/- 50V, we will scale incoming data relative to this threshold and display that scale.
-			});
+			domain: [-5, 5] // set voltage range to be +/- 5V. We scale voltage by this when it comes in (vScale = V/div).
+		});
 		return(
 			<svg width={this.props.width} height={this.props.height}>
-				<rect height={this.props.height} width={this.props.width} fill="#242424"/>
+				<rect height={this.props.height} width={this.props.width} className="graph-rect"/>
+				<Grid 
+					xScale={xScale} 
+					yScale={yScale} 
+					width={this.props.width} 
+					height={this.props.height}
+					stroke={"#FFFF00"}
+				/>
 				{Object.keys(this.props.chans).map(key => {
 					if(this.props.chans[key].enabled==true){
-						const scalar = this.props.chans[key].vScale;
+						const scalar = 1/this.props.chans[key].vScale;
 						const toRender = data[key].map(el => {
 							return({time: el.time, volt: el.volt*scalar})
 						});
@@ -72,7 +80,7 @@ export default class Channels extends Component {
 									data={toRender}
 									x={d => xScale(t(d))}
 									y={d => yScale(v(d))}
-									stroke="#FFFFFF"
+									stroke={this.props.chans[key].color}
 									strokeWidth={2}
 								/>
 							</Group>

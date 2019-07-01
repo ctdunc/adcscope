@@ -33,6 +33,8 @@
     "@babel/preset-react": "^7.0.0",
     "@material-ui/core": "^4.1.3",
     "@material-ui/lab": "^4.0.0-alpha.18",
+    "@primer/octicons-react": "^9.1.1",
+    "@vx/grid": "0.0.189",
     "@vx/group": "0.0.189",
     "@vx/mock-data": "0.0.189",
     "@vx/responsive": "0.0.189",

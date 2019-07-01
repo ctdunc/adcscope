@@ -2,75 +2,115 @@ import React, { Component } from "react";
 import io from "socket.io-client";
 import { ParentSize }from "@vx/responsive";
 import Channels from "./channels";
-import Slider from "@material-ui/lab/Slider";
+import Octicon, { TriangleUp, TriangleDown} from "@primer/octicons-react";
+
 //TODO:
 //Take in channels as prop from contro
 // const socket = io.connect("http://"+document.domain+":"+location.port);
 
-//constant channels for testing.
+//constant channels for testing. 
+// Treat this as immutable (I initialize it explicitly in state for this purpose).
 const channels = [ 
-		{ vScale: 1.2, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true},
-		{ vScale: 1, enabled: true}
+	{ vScale: 1, enabled: true, color:"#cc342b"},
+	{ vScale: 1, enabled: true, color:"#198844"},
+	{ vScale: 1, enabled: true, color:"#fba922"},
+	{ vScale: 1, enabled: true, color:"#778899"},
+	{ vScale: 1, enabled: true, color:"#3971ed"},
+	{ vScale: 1, enabled: true, color:"#a36ac7"},
+	{ vScale: 1, enabled: true, color:"#33ff00"},
+	{ vScale: 1, enabled: true, color:"#ff0000"},
+	{ vScale: 1, enabled: true, color:"#ff0099"},
+	{ vScale: 1, enabled: true, color:"#0066ff"},
+	{ vScale: 1, enabled: true, color:"#cc00ff"},
+	{ vScale: 1, enabled: true, color:"#00ffff"},
+	{ vScale: 1, enabled: true, color:"#808080"}
 ]
 
 const scales = [
-	{value: 0.00001},
-	{value: 0.00002},
-	{value: 0.00005},
-	{value: 0.00010},
-	{value: 0.00050},
-	{value: 0.00100},
-	{value: 0.00200},
-	{value: 0.00500},
-	{value: 0.01000},
-	{value: 0.02000},
-	{value: 0.05000},
-	{value: 0.10000},
-	{value: 0.20000},
-	{value: 0.50000},
-	{value: 1},
-	{value: 2},
-	{value: 5},
-	{value: 10},
-	{value: 20},
-	{value: 50}
+	0.00001,
+	0.00002,
+	0.00005,
+	0.00010,
+	0.00050,
+	0.00100,
+	0.00200,
+	0.00500,
+	0.01000,
+	0.02000,
+	0.05000,
+	0.10000,
+	0.20000,
+	0.50000,
+	1,
+	2,
+	5,
+	10,
+	20,
+	50
 ]
 
 
 const chan_keys = Object.keys(channels);
-//series data for testing lines
 
 export default class Scope extends Component {
 	constructor(props, context){
 		super(props,context);
-		this.state = {channels};
+		this.state = { channels: 
+			[
+				{ vScale: 1, enabled: true, color:"#cc342b"},
+				{ vScale: 1, enabled: true, color:"#198844"},
+				{ vScale: 1, enabled: true, color:"#fba922"},
+				{ vScale: 1, enabled: true, color:"#969896"},
+				{ vScale: 1, enabled: true, color:"#3971ed"},
+				{ vScale: 1, enabled: true, color:"#a36ac7"},
+				{ vScale: 1, enabled: true, color:"#33ff00"},
+				{ vScale: 1, enabled: true, color:"#ff0000"},
+				{ vScale: 1, enabled: true, color:"#ff0099"},
+				{ vScale: 1, enabled: true, color:"#0066ff"},
+				{ vScale: 1, enabled: true, color:"#cc00ff"},
+				{ vScale: 1, enabled: true, color:"#00ffff"},
+				{ vScale: 1, enabled: true, color:"#808080"}
+			]
+		}
 
 		this.toggleChannel = this.toggleChannel.bind(this);
 	}
 	
 	toggleChannel(e){
-		let channel = e.target.name;
+		const channel = e.target.name;
 		let ch = this.state.channels;
-		ch[channel].enabled = !ch[channel].enabled;
+
+		if(ch[channel].enabled){
+			ch[channel].enabled = false;
+			ch[channel].color ="#d3d3d3"; // light gray for channel = disabled
+		}else{
+			ch[channel].enabled = true;
+			ch[channel].color = channels[channel].color;
+		}
+
 		this.setState({
 			channels:  ch
 		});
 	}
 
-	scaleChannel(channel, e, newValue){
+	scaleUp(channel){
 		let ch = this.state.channels;
-		ch[channel].vScale = newValue;
+		let scaleIndex = scales.indexOf(ch[channel].vScale)+1;
+		if(scaleIndex < scales.length){
+			ch[channel].vScale = scales[scales.indexOf(ch[channel].vScale)+1];
+		}
+		this.setState({
+			channels: ch
+		});
+	}
+
+	scaleDown(channel){
+
+		let ch = this.state.channels;
+		let scaleIndex = scales.indexOf(ch[channel].vScale)+1;
+		if(scaleIndex > -1){
+			ch[channel].vScale = scales[scales.indexOf(ch[channel].vScale)-1];
+		}
 		this.setState({
 			channels: ch
 		});
@@ -83,28 +123,37 @@ export default class Scope extends Component {
 			<div className="grid-container">
 				<div className="dashboard">
 					{chan_keys.map((channel)=> {
-						let vs = this.state.channels[channel].vScale;
 						return(
-							<div className="channel-container" key={channel}>
-								{channel}
-								<Slider 
-									value={vs}
-									valueLabelDisplay="auto"
-									onChange={this.scaleChannel.bind(this,channel)}
-									min={0}
-									max={50}
-									marks={scales}
-									step={null}
-								/>
-								<input 
-									type="checkbox" 
-									name={channel}
-									onChange={this.toggleChannel} 
-									checked={this.state.channels[channel].enabled}
-								/>
+							<div className="channel-container" key={channel} style={{"backgroundColor": this.state.channels[channel].color}}>
+								<div className="channel-name">
+									<b>{channel}</b>
+								</div>
+								<div className="channel-control">
+									<input 
+										className="channel-toggle"
+										type="checkbox" 
+										name={channel}
+										onChange={this.toggleChannel} 
+										checked={this.state.channels[channel].enabled}
+										
+									/>
+									Scale: {this.state.channels[channel].vScale}
+									<div className="channel-scalar">
+										<button className="scale-up" onClick={this.scaleUp.bind(this, channel)}>
+											<Octicon verticalAlign="middle" icon={TriangleUp}/>
+										</button>
+										<button className="scale-down" onClick={this.scaleDown.bind(this, channel)}>
+											<Octicon icon={TriangleDown} verticalAlign="middle"/>
+										</button>
+									</div>
+								</div>
 							</div>
 						);
+						<div className="dt-controller">
+							
+						</div>
 					})}
+					
 				</div>
 				<div className="readout">
 					<ParentSize className="graph-container">
