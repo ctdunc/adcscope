@@ -1,3 +1,9 @@
+:root{
+	--main-bg:	#1d1f21;
+	--main-fg:	#c6c8c6;
+}
+
+
 body{
 	height:100%;
 	width:100%;
@@ -7,25 +13,69 @@ body{
 	overflow:hidden;
 }
 
-.left-80{
-	position:	fixed;
-	height:		100vw;
-	width:		80vw;
-	left:		0;
-	top:		0;
-}
-
-.right-20{
-	overflow:auto;
-	position:	fixed;
-	resize:		horizontal;
-	height:		100vh;
-	width:		20vw;
-	right:		0;
-	top:		0;
-	background:	#665F5F;
-	direction:	rtl;
+/* Top Level Layout */
+.grid-container{
+	display:	grid;
+	grid-template-columns:	auto 280px;
+	grid-template-rows:	auto;
+	grid-template-areas:
+	"readout dashboard";
+	height:100vh;
 }
 
 
+/* Layout of Control Panel */
+.dashboard{
+	background-color: var(--main-bg);
+	grid-area: dashboard;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: space-between;
+	align-content: flex-start;
+}
+
+.channel-container{
+	flex-grow: 1;
+	flex-direction:	row;
+	border-style:	solid;
+	border-radius:	5px;
+	display:	grid;
+	padding: 10px;
+	grid-template-columns:	10% auto;
+	grid-template-areas: "number control";
+}
+
+.channel-name{
+	grid-area: number;
+	font-size: x-large;
+}
+
+.channel-control{
+	grid-area: "control";
+	display: flex;
+	flex-direction: column;
+	align-items: end;
+}
+
+.channel-scalar{
+	display: flex;
+	flex-direction: column;
+	align-items: end;
+}
+
+
+.channel-toggle{
+	margin-right: 0;
+	background-color: var(--main-bg);
+}
+
+/* Layout of Display */
+.readout{
+	grid-area: readout;
+	display: flex;
+	flex: 1;
+}
+.graph-rect{
+	fill:	var(--main-bg);
+}
 

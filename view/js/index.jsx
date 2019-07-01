@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ADCScope from "./main";
+import Scope from "./scope";
+import "../css/main.css";
 
-ReactDOM.render(<ADCScope/>, document.getElementById("content"));
+ReactDOM.render(<Scope/>, document.getElementById("content"));
