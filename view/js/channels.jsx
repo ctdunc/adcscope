@@ -35,14 +35,23 @@ export default class Channels extends Component {
 	constructor(props, context){
 		super(props, context);
 
-		this.state = {
-			data: fallback_voltage_data, 
+		var futureState = {
 			time: fallback_time_data,
 			trlen: 2
 		};
+		this.props.chans.map((k,ind) => {futureState[ind]=[0,0]});
+		this.state = futureState;
 
 		this.handleVoltageUpdate = this.handleVoltageUpdate.bind(this);
+		this.handleDisabledChans = this.handleDisabledChans.bind(this);
 		socket.on('newTrace', (d)=>{this.handleVoltageUpdate(d)});
+	}
+	
+	handleDisabledChans(tr){
+		const ts = range(tr);
+		var futureState = {time: ts, trlen: tr};
+		this.props.chans.map((k,ind) => {futureState[ind] = Array(tr).fill(0)})
+		this.setState(futureState);
 	}
 
 	handleVoltageUpdate(emitted){
@@ -51,13 +60,12 @@ export default class Channels extends Component {
 		const l = emitted.l;
 		var d = emitted.v.map((v)=>{return(Array.from(new Float32Array(v)))});
 		if(this.state.trlen!==l){
-			this.setState({time:range(l),trlen:l});	
+			this.handleDisabledChans(l);
 		}
-		this.setState({data:d});
+		d.map((data, ind) => { this.setState({[ind]: data})});
 	}
 	
 	render(){
-		const data = this.state.data;
 		const xScale = scaleLinear({
 			range: [0, this.props.width],
 			domain: [0,this.state.trlen]
@@ -80,7 +88,7 @@ export default class Channels extends Component {
 				{Object.keys(this.props.chans).map(key => {
 					if(this.props.chans[key].enabled==true){
 						const scalar = 1/this.props.chans[key].vScale;
-						const toRender = data[key].map((elt, ind) => {
+						const toRender = this.state[key].map((elt, ind) => {
 								return({time: this.state.time[ind], volt: elt*scalar})
 						})
 						return(
