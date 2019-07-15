@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'; 
 import { Group } from '@vx/group';
 import { LinePath } from '@vx/shape';
 import { scaleTime, scaleLinear } from '@vx/scale';
@@ -8,51 +8,59 @@ import io from "socket.io-client";
 
 const socket = io.connect("http://"+document.domain+":"+location.port);
 
-var dt = [
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}],
-[{volt:0,time:0},{volt:1,time:1}]
+// defines accessors for use by vx later.
+const t = d => d.time
+const v = d => d.volt
+
+// fallback value for voltage
+const fallback_voltage_data = [
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
+	[0,0],
 ];
 
-function handleUpdate(data){
-	dt= data;
-	console.log(dt)
-	return;
-}
-
-
-const v = d => d.volt
-const t = d => d.time
+const fallback_time_data = [0,1]
 
 export default class Channels extends Component {
 	constructor(props, context){
 		super(props, context);
 
-		this.state = {data: dt};
+		this.state = {
+			data: fallback_voltage_data, 
+			timeseries: fallback_time_data
+		};
 
-		socket.on('trace', (d)=>{this.handleUpdate(d)});
+		socket.on('newTrace', (d)=>{this.handleVoltageUpdate(d)});
 	}
-	
-	handleUpdate(dt){
-		this.setState({data:dt})
+
+	handleVoltageUpdate(d){
+		// check to make sure that our time, voltage arrays have the same length
+		// NEVER EMIT DIFFERENT LENGTH VOLTAGE SERIES FROM THE SAME DEVICE. It will break the webpage.
+		if(d[0].length!==this.state.timeseries.length){
+			var ts = [];
+			d[0].map((elt, ind) => {ts.push(ind/d[0].length)})
+			this.setState({timeseries:ts, data:d})
+		}else{
+			if(this.props.acquire){
+				this.setState({data:d});
+			}
+		}
 	}
 
 	render(){
 		const data = this.state.data;
-		const dat = data[0];
 		const xScale = scaleLinear({
 			range: [0, this.props.width],
-			domain: [min(dat,t),max(dat,t)]
+			domain: [0,1]
 		});
 		const yScale = scaleLinear({
 			range: [this.props.height, 0],
@@ -66,14 +74,15 @@ export default class Channels extends Component {
 					yScale={yScale} 
 					width={this.props.width} 
 					height={this.props.height}
-					stroke={"#FFFF00"}
+					strokeDasharray="1,5" // makes the lines dashed
+					stroke="#FF0"
 				/>
 				{Object.keys(this.props.chans).map(key => {
 					if(this.props.chans[key].enabled==true){
 						const scalar = 1/this.props.chans[key].vScale;
-						const toRender = data[key].map(el => {
-							return({time: el.time, volt: el.volt*scalar})
-						});
+						const toRender = data[key].map((elt, ind) => {
+								return({time: this.state.timeseries[ind], volt: elt*scalar})
+						})
 						return(
 							<Group key={key}>
 								<LinePath

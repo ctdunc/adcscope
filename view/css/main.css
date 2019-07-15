@@ -10,7 +10,7 @@ body{
 	margin:0;
 	max-width:100vw;
 	max-height: 100vh;
-	overflow:hidden;
+	overflow: hidden;
 }
 
 /* Top Level Layout */
@@ -28,12 +28,14 @@ body{
 .dashboard{
 	background-color: var(--main-bg);
 	grid-area: dashboard;
+}
+
+.channel-panel{
 	display: flex;
 	flex-flow: row wrap;
 	align-items: space-between;
 	align-content: flex-start;
 }
-
 .channel-container{
 	flex-grow: 1;
 	flex-direction:	row;
@@ -72,8 +74,6 @@ body{
 /* Layout of Display */
 .readout{
 	grid-area: readout;
-	display: flex;
-	flex: 1;
 }
 .graph-rect{
 	fill:	var(--main-bg);

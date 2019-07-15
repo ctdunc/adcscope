@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import io from "socket.io-client";
 import { ParentSize }from "@vx/responsive";
 import Channels from "./channels";
 import Octicon, { TriangleUp, TriangleDown} from "@primer/octicons-react";
@@ -23,7 +22,6 @@ const channels = [
 	{ vScale: 1, enabled: true, color:"#0066ff"},
 	{ vScale: 1, enabled: true, color:"#cc00ff"},
 	{ vScale: 1, enabled: true, color:"#00ffff"},
-	{ vScale: 1, enabled: true, color:"#808080"}
 ]
 
 const scales = [
@@ -69,11 +67,13 @@ export default class Scope extends Component {
 				{ vScale: 1, enabled: true, color:"#0066ff"},
 				{ vScale: 1, enabled: true, color:"#cc00ff"},
 				{ vScale: 1, enabled: true, color:"#00ffff"},
-				{ vScale: 1, enabled: true, color:"#808080"}
-			]
+			],
+			squareDisplay: true,
+			acquire: true
 		}
 
 		this.toggleChannel = this.toggleChannel.bind(this);
+		this.toggleAcquire = this.toggleAcquire.bind(this);
 	}
 	
 	toggleChannel(e){
@@ -91,6 +91,10 @@ export default class Scope extends Component {
 		this.setState({
 			channels:  ch
 		});
+	}
+
+	toggleAcquire(){
+		this.setState({acquire:!this.state.acquire});
 	}
 
 	scaleUp(channel){
@@ -122,47 +126,50 @@ export default class Scope extends Component {
 		return(
 			<div className="grid-container">
 				<div className="dashboard">
-					{chan_keys.map((channel)=> {
-						return(
-							<div className="channel-container" key={channel} style={{"backgroundColor": this.state.channels[channel].color}}>
-								<div className="channel-name">
-									<b>{channel}</b>
-								</div>
-								<div className="channel-control">
-									<input 
-										className="channel-toggle"
-										type="checkbox" 
-										name={channel}
-										onChange={this.toggleChannel} 
-										checked={this.state.channels[channel].enabled}
-										
-									/>
-									Scale: {this.state.channels[channel].vScale}
-									<div className="channel-scalar">
-										<button className="scale-up" onClick={this.scaleUp.bind(this, channel)}>
-											<Octicon verticalAlign="middle" icon={TriangleUp}/>
-										</button>
-										<button className="scale-down" onClick={this.scaleDown.bind(this, channel)}>
-											<Octicon icon={TriangleDown} verticalAlign="middle"/>
-										</button>
+					<div className="layout-panel">
+						<button onClick={this.toggleAcquire}>{this.state.acquire ? "Stop" : "Start"}</button>
+					</div>
+					<div className="channel-panel">
+						{chan_keys.map((channel)=> {
+							return(
+								<div className="channel-container" key={channel} style={{"backgroundColor": this.state.channels[channel].color}}>
+									<div className="channel-name">
+										<b>{channel}</b>
+									</div>
+									<div className="channel-control">
+										<input 
+											className="channel-toggle"
+											type="checkbox" 
+											name={channel}
+											onChange={this.toggleChannel} 
+											checked={this.state.channels[channel].enabled}
+											
+										/>
+										Scale: {this.state.channels[channel].vScale}
+										<div className="channel-scalar">
+											<button className="scale-up" onClick={this.scaleUp.bind(this, channel)}>
+												<Octicon verticalAlign="middle" icon={TriangleUp}/>
+											</button>
+											<button className="scale-down" onClick={this.scaleDown.bind(this, channel)}>
+												<Octicon icon={TriangleDown} verticalAlign="middle"/>
+											</button>
+										</div>
 									</div>
 								</div>
-							</div>
-						);
-						<div className="dt-controller">
-							
-						</div>
-					})}
-					
+							);
+						})}
+					</div>
 				</div>
 				<div className="readout">
 					<ParentSize className="graph-container">
 						{({width:w, height: h}) => {
+							const dim = Math.min(w,h)
 							return(
 								<Channels
 									chans={enabledChans}
-									width={w}
-									height={h}
+									width={dim}
+									height={dim}
+									acquire={this.state.acquire}
 								/>
 							)
 						}}
