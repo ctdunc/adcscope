@@ -5,6 +5,7 @@ import { scaleTime, scaleLinear } from '@vx/scale';
 import { Grid } from '@vx/grid';
 import { extent, max, min } from 'd3-array';
 import io from "socket.io-client";
+import { range } from "lodash";
 
 const socket = io.connect("http://"+document.domain+":"+location.port);
 
@@ -36,31 +37,30 @@ export default class Channels extends Component {
 
 		this.state = {
 			data: fallback_voltage_data, 
-			timeseries: fallback_time_data
+			time: fallback_time_data,
+			trlen: 2
 		};
 
+		this.handleVoltageUpdate = this.handleVoltageUpdate.bind(this);
 		socket.on('newTrace', (d)=>{this.handleVoltageUpdate(d)});
 	}
 
-	handleVoltageUpdate(d){
+	handleVoltageUpdate(emitted){
 		// check to make sure that our time, voltage arrays have the same length
 		// NEVER EMIT DIFFERENT LENGTH VOLTAGE SERIES FROM THE SAME DEVICE. It will break the webpage.
-		if(d[0].length!==this.state.timeseries.length){
-			var ts = [];
-			d[0].map((elt, ind) => {ts.push(ind/d[0].length)})
-			this.setState({timeseries:ts, data:d})
-		}else{
-			if(this.props.acquire){
-				this.setState({data:d});
-			}
+		const l = emitted.l;
+		var d = emitted.v.map((v)=>{return(Array.from(new Float32Array(v)))});
+		if(this.state.trlen!==l){
+			this.setState({time:range(l),trlen:l});	
 		}
+		this.setState({data:d});
 	}
-
+	
 	render(){
 		const data = this.state.data;
 		const xScale = scaleLinear({
 			range: [0, this.props.width],
-			domain: [0,1]
+			domain: [0,this.state.trlen]
 		});
 		const yScale = scaleLinear({
 			range: [this.props.height, 0],
@@ -81,7 +81,7 @@ export default class Channels extends Component {
 					if(this.props.chans[key].enabled==true){
 						const scalar = 1/this.props.chans[key].vScale;
 						const toRender = data[key].map((elt, ind) => {
-								return({time: this.state.timeseries[ind], volt: elt*scalar})
+								return({time: this.state.time[ind], volt: elt*scalar})
 						})
 						return(
 							<Group key={key}>

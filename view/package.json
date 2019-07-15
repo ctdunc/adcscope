@@ -51,7 +51,7 @@
     "react-rangeslider": "^2.2.0",
     "socket.io": "^2.2.0",
     "vx": "0.0.1",
-    "webpack": "4.35.0"
+    "webpack": "^4.35.0"
   },
   "devDependencies": {
     "webpack-cli": "^3.3.4"
