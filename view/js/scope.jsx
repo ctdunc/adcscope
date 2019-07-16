@@ -10,18 +10,18 @@ import Octicon, { TriangleUp, TriangleDown} from "@primer/octicons-react";
 //constant channels for testing. 
 // Treat this as immutable (I initialize it explicitly in state for this purpose).
 const channels = [ 
-	{ vScale: 1, enabled: true, color:"#cc342b"},
-	{ vScale: 1, enabled: true, color:"#198844"},
-	{ vScale: 1, enabled: true, color:"#fba922"},
-	{ vScale: 1, enabled: true, color:"#778899"},
-	{ vScale: 1, enabled: true, color:"#3971ed"},
-	{ vScale: 1, enabled: true, color:"#a36ac7"},
-	{ vScale: 1, enabled: true, color:"#33ff00"},
-	{ vScale: 1, enabled: true, color:"#ff0000"},
-	{ vScale: 1, enabled: true, color:"#ff0099"},
-	{ vScale: 1, enabled: true, color:"#0066ff"},
-	{ vScale: 1, enabled: true, color:"#cc00ff"},
-	{ vScale: 1, enabled: true, color:"#00ffff"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#cc342b"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#198844"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#fba922"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#778899"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#3971ed"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#a36ac7"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#33ff00"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#ff0000"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#ff0099"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#0066ff"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#cc00ff"},
+	{ vScale: 1, offset: 0, enabled: true, color:"#00ffff"},
 ]
 
 const scales = [
@@ -53,27 +53,29 @@ const chan_keys = Object.keys(channels);
 export default class Scope extends Component {
 	constructor(props, context){
 		super(props,context);
-		this.state = { channels: 
+		this.state = { 
+			channels: 
 			[
-				{ vScale: 1, enabled: true, color:"#cc342b"},
-				{ vScale: 1, enabled: true, color:"#198844"},
-				{ vScale: 1, enabled: true, color:"#fba922"},
-				{ vScale: 1, enabled: true, color:"#969896"},
-				{ vScale: 1, enabled: true, color:"#3971ed"},
-				{ vScale: 1, enabled: true, color:"#a36ac7"},
-				{ vScale: 1, enabled: true, color:"#33ff00"},
-				{ vScale: 1, enabled: true, color:"#ff0000"},
-				{ vScale: 1, enabled: true, color:"#ff0099"},
-				{ vScale: 1, enabled: true, color:"#0066ff"},
-				{ vScale: 1, enabled: true, color:"#cc00ff"},
-				{ vScale: 1, enabled: true, color:"#00ffff"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#cc342b"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#198844"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#fba922"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#778899"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#3971ed"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#a36ac7"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#33ff00"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#ff0000"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#ff0099"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#0066ff"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#cc00ff"},
+				{ vScale: 1, offset: 0, enabled: true, color:"#00ffff"},
 			],
 			squareDisplay: true,
 			acquire: true
-		}
+		};
 
 		this.toggleChannel = this.toggleChannel.bind(this);
 		this.toggleAcquire = this.toggleAcquire.bind(this);
+		this.offset = this.offset.bind(this);
 	}
 	
 	toggleChannel(e){
@@ -87,7 +89,6 @@ export default class Scope extends Component {
 			ch[channel].enabled = true;
 			ch[channel].color = channels[channel].color;
 		}
-
 		this.setState({
 			channels:  ch
 		});
@@ -119,10 +120,14 @@ export default class Scope extends Component {
 			channels: ch
 		});
 	}
-	
+	offset(e){
+		let ch = this.state.channels;
+		ch[e.target.name].offset=e.target.value;
+		this.setState({channels:ch});
+	}
+
 	render(){
 		const enabledChans = this.state.channels;
-		
 		return(
 			<div className="grid-container">
 				<div className="dashboard">
@@ -132,27 +137,52 @@ export default class Scope extends Component {
 					<div className="channel-panel">
 						{chan_keys.map((channel)=> {
 							return(
-								<div className="channel-container" key={channel} style={{"backgroundColor": this.state.channels[channel].color}}>
+								<div 
+									className="channel-container" 
+									key={channel} 
+									style={{"backgroundColor": this.state.channels[channel].color}}
+								>
 									<div className="channel-name">
 										<b>{channel}</b>
 									</div>
+									<table className="channel-state">
+										<tbody>
+											<tr>
+												<th>scale:</th>
+												<td>{this.state.channels[channel].vScale}V</td>
+											</tr>
+											<tr>
+												<th>offset:</th>
+												<td>{this.state.channels[channel].offset}V</td>
+											</tr>
+										</tbody>
+									</table>
 									<div className="channel-control">
-										<input 
+										<button 
 											className="channel-toggle"
-											type="checkbox" 
 											name={channel}
-											onChange={this.toggleChannel} 
-											checked={this.state.channels[channel].enabled}
-											
-										/>
-										Scale: {this.state.channels[channel].vScale}
+											onClick={this.toggleChannel} 
+										>{this.state.channels[channel].enabled ? "Hide" : "Show"}
+										</button>
 										<div className="channel-scalar">
-											<button className="scale-up" onClick={this.scaleUp.bind(this, channel)}>
+											<button className="scale-down" onClick={this.scaleDown.bind(this, channel)}>
 												<Octicon verticalAlign="middle" icon={TriangleUp}/>
 											</button>
-											<button className="scale-down" onClick={this.scaleDown.bind(this, channel)}>
+											<button className="scale-up" onClick={this.scaleUp.bind(this, channel)}>
 												<Octicon icon={TriangleDown} verticalAlign="middle"/>
 											</button>
+										</div>
+										<div className="channel-offset">
+											<input
+												type="range"
+												orient="vertical"
+												name={channel}
+												min={-5*this.state.channels[channel].vScale}
+												max={5*this.state.channels[channel].vScale}
+												onChange={this.offset}
+												value={this.state.channels[channel].offset}
+												step={this.state.channels[channel].vScale/10}
+											/>
 										</div>
 									</div>
 								</div>
@@ -160,21 +190,19 @@ export default class Scope extends Component {
 						})}
 					</div>
 				</div>
-				<div className="readout">
-					<ParentSize className="graph-container">
-						{({width:w, height: h}) => {
-							const dim = Math.min(w,h)
-							return(
-								<Channels
-									chans={enabledChans}
-									width={dim}
-									height={dim}
-									acquire={this.state.acquire}
-								/>
-							)
-						}}
-					</ParentSize>
-				</div>
+				<ParentSize className="readout">
+					{({width:w, height: h}) => {
+						h = w < h ? w : h
+						return(
+							<Channels
+								chans={enabledChans}
+								width={w}
+								height={h}
+								acquire={this.state.acquire}
+							/>
+						)
+					}}
+				</ParentSize>
 			</div>
 		);
 	}

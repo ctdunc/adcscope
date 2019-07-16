@@ -47,24 +47,26 @@ export default class Channels extends Component {
 		socket.on('newTrace', (d)=>{this.handleVoltageUpdate(d)});
 	}
 	
-	handleDisabledChans(tr){
-		const ts = range(tr);
-		var futureState = {time: ts, trlen: tr};
-		this.props.chans.map((k,ind) => {futureState[ind] = Array(tr).fill(0)})
-		this.setState(futureState);
-	}
-
 	handleVoltageUpdate(emitted){
+		const l = emitted.l; // allows transmission of timeseries without generating new data on the server.
+		const d = emitted.v.map((v)=>{return(Array.from(new Float32Array(v)))}); // enables binary transport of data
+
 		// check to make sure that our time, voltage arrays have the same length
 		// NEVER EMIT DIFFERENT LENGTH VOLTAGE SERIES FROM THE SAME DEVICE. It will break the webpage.
-		const l = emitted.l;
-		var d = emitted.v.map((v)=>{return(Array.from(new Float32Array(v)))});
 		if(this.state.trlen!==l){
 			this.handleDisabledChans(l);
 		}
+
 		d.map((data, ind) => { this.setState({[ind]: data})});
 	}
-	
+
+	handleDisabledChans(tr){
+		const ts = range(tr);
+		var futureState = {time: ts, trlen: tr};
+		this.props.chans.map((k,ind) => {futureState[ind] = Array(tr).fill(0)});
+		this.setState(futureState);
+	}
+
 	render(){
 		const xScale = scaleLinear({
 			range: [0, this.props.width],
@@ -88,8 +90,10 @@ export default class Channels extends Component {
 				{Object.keys(this.props.chans).map(key => {
 					if(this.props.chans[key].enabled==true){
 						const scalar = 1/this.props.chans[key].vScale;
+						const offset = this.props.chans[key].offset;
 						const toRender = this.state[key].map((elt, ind) => {
-								return({time: this.state.time[ind], volt: elt*scalar})
+								let v = parseFloat(elt*scalar)+parseFloat(offset);
+								return({time: this.state.time[ind], volt: v});
 						})
 						return(
 							<Group key={key}>

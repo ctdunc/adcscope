@@ -16,7 +16,7 @@ body{
 /* Top Level Layout */
 .grid-container{
 	display:	grid;
-	grid-template-columns:	auto 280px;
+	grid-template-columns:	auto 400px;
 	grid-template-rows:	auto;
 	grid-template-areas:
 	"readout dashboard";
@@ -31,11 +31,11 @@ body{
 }
 
 .channel-panel{
-	display: flex;
-	flex-flow: row wrap;
+	display: grid;
+	grid-template-columns: 50% 50%;
 	align-items: space-between;
-	align-content: flex-start;
 }
+
 .channel-container{
 	flex-grow: 1;
 	flex-direction:	row;
@@ -43,8 +43,11 @@ body{
 	border-radius:	5px;
 	display:	grid;
 	padding: 10px;
-	grid-template-columns:	10% auto;
-	grid-template-areas: "number control";
+	grid-template-columns:	50% 50%;
+	grid-template-rows: 20% auto;
+	grid-template-areas: 
+	'number control'
+	'state	control';
 }
 
 .channel-name{
@@ -52,28 +55,50 @@ body{
 	font-size: x-large;
 }
 
+.channel-state{
+	grid-area:state;
+}
+
+.channel-state>table, tbody, tr, th, td{
+	text-align: left;
+	height: auto;
+}
+
 .channel-control{
-	grid-area: "control";
-	display: flex;
-	flex-direction: column;
-	align-items: end;
+	grid-area: control;
+	display: grid;
+	grid-template-columns: 80% auto;
+	grid-template-rows: 15% auto;
+	grid-template-areas:
+	'hider hider'
+	'scalar slider';
+	max-height: calc(0.13 * 100vh);
 }
-
 .channel-scalar{
+	grid-area: scalar;
 	display: flex;
 	flex-direction: column;
-	align-items: end;
 }
-
 
 .channel-toggle{
 	margin-right: 0;
-	background-color: var(--main-bg);
+	grid-area: hider;
+}
+
+.channel-offset{
+	grid-area: slider;
+}
+.channel-offset>input{
+	height: 80%;
 }
 
 /* Layout of Display */
 .readout{
 	grid-area: readout;
+	display: grid;
+}
+.readout>svg{
+	justify-self: end;
 }
 .graph-rect{
 	fill:	var(--main-bg);
