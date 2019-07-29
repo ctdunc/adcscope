@@ -1,0 +1,106 @@
+:root{
+	--main-bg:	#1d1f21;
+	--main-fg:	#c6c8c6;
+}
+
+
+body{
+	height:100%;
+	width:100%;
+	margin:0;
+	max-width:100vw;
+	max-height: 100vh;
+	overflow: hidden;
+}
+
+/* Top Level Layout */
+.grid-container{
+	display:	grid;
+	grid-template-columns:	auto 400px;
+	grid-template-rows:	auto;
+	grid-template-areas:
+	"readout dashboard";
+	height:100vh;
+}
+
+
+/* Layout of Control Panel */
+.dashboard{
+	background-color: var(--main-bg);
+	grid-area: dashboard;
+}
+
+.channel-panel{
+	display: grid;
+	grid-template-columns: 50% 50%;
+	align-items: space-between;
+}
+
+.channel-container{
+	flex-grow: 1;
+	flex-direction:	row;
+	border-style:	solid;
+	border-radius:	5px;
+	display:	grid;
+	padding: 10px;
+	grid-template-columns:	50% 50%;
+	grid-template-rows: 20% auto;
+	grid-template-areas: 
+	'number control'
+	'state	control';
+}
+
+.channel-name{
+	grid-area: number;
+	font-size: x-large;
+}
+
+.channel-state{
+	grid-area:state;
+}
+
+.channel-state>table, tbody, tr, th, td{
+	text-align: left;
+	height: auto;
+}
+
+.channel-control{
+	grid-area: control;
+	display: grid;
+	grid-template-columns: 80% auto;
+	grid-template-rows: 15% auto;
+	grid-template-areas:
+	'hider hider'
+	'scalar slider';
+	max-height: calc(0.13 * 100vh);
+}
+.channel-scalar{
+	grid-area: scalar;
+	display: flex;
+	flex-direction: column;
+}
+
+.channel-toggle{
+	margin-right: 0;
+	grid-area: hider;
+}
+
+.channel-offset{
+	grid-area: slider;
+}
+.channel-offset>input{
+	height: 80%;
+}
+
+/* Layout of Display */
+.readout{
+	grid-area: readout;
+	display: grid;
+}
+.readout>svg{
+	justify-self: end;
+}
+.graph-rect{
+	fill:	var(--main-bg);
+}
+

@@ -1,0 +1,31 @@
+:root{
+	--main-bg:	#1d1f21;
+	--main-fg:	#c6c8c6;
+}
+
+.config-container {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: stretch;
+}
+
+.config-container > * {
+	flex: 1 100%;
+}
+
+/*medium screens */
+@media all and (min-width: 600px){
+	/* tell submenus to share a row unless screen is tiny */
+	.submenu{
+		flex: 1 auto;
+	}
+}
+
+/* configure titlebar */
+.titlebar {
+	display: flex;
+	flex-flow: row wrap;
+	}
+.titlebar>h1{
+	padding-right: 40px;
+}
