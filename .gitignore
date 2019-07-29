@@ -1,3 +1,4 @@
 envv/
 env/
-view/node_modules/
+view/scope/node_modules/
+view/control/node_modules/
