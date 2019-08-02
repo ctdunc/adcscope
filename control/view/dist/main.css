@@ -30,3 +30,10 @@
 	padding-right: 40px;
 }
 
+.channel-config{
+	display: flex;
+	flex-flow: row;
+	align-items: stretch;
+	justify-content: space-between;
+}
+
