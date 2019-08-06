@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, jsonify
 import redis
+from tesdaq.command import DAQCommander
 r = redis.Redis()
 control = Blueprint(
         "control",
@@ -7,11 +8,17 @@ control = Blueprint(
         static_folder="./view/dist",
         template_folder='./view'
         )
-@control.route("/get-dev")
-def get_dev():
-    print(r.keys())
-    return("hell")
+
+daq_cmd = DAQCommander(r)
+
 @control.route("/")
 def render():
     return render_template("index.html")
 
+@control.route("/active-devices/")
+def return_active():
+    return jsonify(daq_cmd.get_active_devices())
+
+@control.route("/device/<dev>", methods=["GET"])
+def return_device(dev):
+    return jsonify(daq_cmd.get_device_config(dev))
