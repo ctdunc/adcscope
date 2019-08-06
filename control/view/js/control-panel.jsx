@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Select, MenuItem } from "@material-ui/core";
-import DeviceConfig from "./device-config";
+import DeviceConfig from "./device-config/device-config";
 var $ = require('jquery');
 export default class ControlPanel extends Component {
 	constructor(props, context){
@@ -8,25 +8,40 @@ export default class ControlPanel extends Component {
 		this.state = {
 			devices: ["no devices found"],
 			current_device: "no devices found",
-			device_options: {},
+			activeDeviceOpts: {},
 		}
+		this.submit = this.submit.bind(this);
 		this.handleDeviceChange = this.handleDeviceChange.bind(this);
+		this.updateActiveDeviceOpts= this.updateActiveDeviceOpts.bind(this);
 	}
+	/****** Lifecycle Events ******/
 	componentDidMount(){
 		$.get(window.location.href+'active-devices', (d) => {
 			$.get(window.location.href+'device/'+d[0], (d0) =>{
-				this.setState({devices: d, current_device: d[0], device_options:d0});
+				console.log(d0);
+				this.setState({devices: d, current_device: d[0], activeDeviceOpts:d0});
 			})
 		});	
 	}
-
+	
+	/****** Device State Functions ******/
 	handleDeviceChange(event){
 		$.get(window.location.href+'device/'+event.target.name, (d) =>
 			{
-				this.setState({current_device: event.target.name, device_options: d})
+				this.setState({current_device: event.target.name, activeDeviceOpts: d})
 			});
 	}
 	
+	updateActiveDeviceOpts(typeKey, newValue){
+		let currentState = this.state.activeDeviceOpts; 
+		currentState[typeKey] = newValue;
+		this.setState({"activeDeviceOpts": currentState});
+	}
+
+	submit(event){
+		console.log(this.state);
+	}
+
 	render(){
 		return(
 		<div className="config-container">
@@ -35,7 +50,6 @@ export default class ControlPanel extends Component {
 				<Select 
 				value={this.state.current_device}
 				onChange={this.handleChange}
-				autoWidth={true}
 				inputProps={{name:"current_device", id:"device"}}
 				className="dev-select"
 				>	
@@ -47,12 +61,18 @@ export default class ControlPanel extends Component {
 				}
 				</Select>
 			</div>
-			<DeviceConfig conf_vars={this.state.device_options} className="submenu"/>
+			<DeviceConfig 
+			value={this.state.activeDeviceOpts}
+			onChange={this.updateActiveDeviceOpts}
+			className="submenu"/>
 			<div className="submenu">
 			an
 			</div>
 			<div className="submenu">
 			sv
+			</div>
+			<div className="action-bar">
+				<button name="start" onClick={this.submit}> Start Run </button>
 			</div>
 		</div>
 		);

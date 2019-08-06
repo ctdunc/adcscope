@@ -22,3 +22,7 @@ def return_active():
 @control.route("/device/<dev>", methods=["GET"])
 def return_device(dev):
     return jsonify(daq_cmd.get_device_config(dev))
+
+@control.route("/start-run/", methods=["POST"])
+def start_run(json):
+    return jsonify(0)
