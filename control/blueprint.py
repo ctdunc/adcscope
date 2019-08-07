@@ -25,7 +25,19 @@ def return_device(dev):
 
 @control.route("/start-run/", methods=["POST"])
 def start_run():
-    print(request.form)
-    for key, value in request.form[0]:
-        print(key, value)
+    # Get data from form
+    data = request.get_json()
+    try:
+        device = data['current_device'] 
+    except KeyError:
+        return 'Current device not specified.'
+
+    try:
+        cfg_options = data['config_options']
+    except KeyError:
+        return 'No \'config_options\' specified.'
+    
+    for channel_type in cfg_options:
+       # do the daq_commander part of the channel opt. 
+
     return jsonify(0)
