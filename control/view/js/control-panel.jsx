@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Select, MenuItem } from "@material-ui/core";
 import DeviceConfig from "./device-config/device-config";
+
 var $ = require('jquery');
 export default class ControlPanel extends Component {
 	constructor(props, context){
@@ -17,10 +18,9 @@ export default class ControlPanel extends Component {
 	/****** Lifecycle Events ******/
 	componentDidMount(){
 		$.get(window.location.href+'active-devices', (d) => {
-			$.get(window.location.href+'device/'+d[0], (d0) =>{
-				console.log(d0);
-				this.setState({devices: d, current_device: d[0], activeDeviceOpts:d0});
-			})
+				this.setState({devices:d});
+				let e = {target: {name: d[0]}}; //basically a hack to get handleDeviceChange to think the user selected the 0th device
+				this.handleDeviceChange(e);
 		});	
 	}
 	
@@ -28,6 +28,16 @@ export default class ControlPanel extends Component {
 	handleDeviceChange(event){
 		$.get(window.location.href+'device/'+event.target.name, (d) =>
 			{
+				if(d.is_currently_running){
+					d = null;
+				}else{
+					delete d.is_currently_running;
+					// sets default trigger mode
+					Object.keys(d).map(key =>{
+						d[key].trigger_opts = d[key].trigger_opts[0] ? d[key].trigger_opts : ["continuous"];
+						d[key].sample_mode = d[key].trigger_opts[0];
+					})
+				}
 				this.setState({current_device: event.target.name, activeDeviceOpts: d})
 			});
 	}
@@ -38,8 +48,9 @@ export default class ControlPanel extends Component {
 		this.setState({"activeDeviceOpts": currentState});
 	}
 
+	/****** Full Form Function ******/
 	submit(event){
-		console.log(this.state);
+		$.post(window.location.href+'start-run/', JSON.stringify(this.state));
 	}
 
 	render(){

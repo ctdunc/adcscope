@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 import redis
 from tesdaq.command import DAQCommander
 r = redis.Redis()
@@ -24,5 +24,8 @@ def return_device(dev):
     return jsonify(daq_cmd.get_device_config(dev))
 
 @control.route("/start-run/", methods=["POST"])
-def start_run(json):
+def start_run():
+    print(request.form)
+    for key, value in request.form[0]:
+        print(key, value)
     return jsonify(0)
