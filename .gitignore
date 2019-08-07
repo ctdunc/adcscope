@@ -2,3 +2,4 @@ envv/
 env/
 scope/view/node_modules/
 control/view/node_modules/
+*.pyc
