@@ -38,6 +38,7 @@ def start_run():
         return 'No \'config_options\' specified.'
     
     for channel_type in cfg_options:
+        print(channel_type)
        # do the daq_commander part of the channel opt. 
-
+    daq_cmd.configure(device, **cfg_options)
     return jsonify(0)
