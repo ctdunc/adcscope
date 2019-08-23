@@ -34,8 +34,8 @@ export default class ControlPanel extends Component {
 					delete d.is_currently_running;
 					// sets default trigger mode
 					Object.keys(d).map(key =>{
-						d[key].trigger_opts = d[key].trigger_opts[0] ? d[key].trigger_opts : ["continuous"];
-						d[key].sample_mode = d[key].trigger_opts[0];
+						d[key].restriction.valid_timing = d[key].restriction.valid_timing[0] ? d[key].restriction.valid_timing: ["continuous"];
+						d[key].state.sample_mode = d[key].restriction.valid_timing[0];
 					})
 				}
 				this.setState({current_device: event.target.name, activeDeviceOpts: d})

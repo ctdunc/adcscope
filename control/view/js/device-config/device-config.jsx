@@ -16,7 +16,7 @@ export default class DeviceConfig extends Component{
 					key={key}
 					name={key}
 					onChange={this.props.onChange}
-					value={this.props.value[key]}/>
+					value={this.props.value[key].restriction}/>
 				)})}
 			</div>
 		);

@@ -42,7 +42,7 @@ export default class ConfigByType extends Component {
 						inputProps={{name:"sample_mode"}}
 						value={this.props.value.sample_mode}
 					>
-						{this.props.value.trigger_opts.map(mode=>{
+						{this.props.value.valid_timing.map(mode=>{
 							return(
 								<MenuItem key={mode} value={mode}>{mode}</MenuItem>
 							)}
