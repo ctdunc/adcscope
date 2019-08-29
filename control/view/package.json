@@ -24,6 +24,8 @@
     "octicons-react": "^0.18.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-light-accordion": "^0.1.4",
+    "react-select": "^3.0.4",
     "webpack": "^4.39.0"
   },
   "devDependencies": {

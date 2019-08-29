@@ -15,30 +15,35 @@ daq_cmd = DAQCommander(r)
 def render():
     return render_template("index.html")
 
-@control.route("/active-devices/")
+@control.route("/devices")
 def return_active():
     return jsonify(daq_cmd.get_existing_devices())
 
-@control.route("/device/<dev>", methods=["GET"])
+@control.route("/devices/<dev>", methods=["GET"])
 def return_device(dev):
     return jsonify(daq_cmd.get_device_state(dev))
 
-@control.route("/start-run/", methods=["POST"])
-def start_run():
+@control.route("/devices/<dev>/<task>", methods=["GET"])
+def return_task(dev=None, task=None):
+    return jsonify(daq_cmd.get_device_state(dev)[task])
+
+@control.route("/configure", methods=["POST"])
+def configure():
     # Get data from form
     data = request.get_json()
-    try:
-        device = data['current_device'] 
-    except KeyError:
-        return 'Current device not specified.'
+    device = data['device'] 
+    task_type = data['task']
+    options = data['options']
+    daq_cmd.configure(device, {task_type: options})
+    return jsonify(0)
 
-    try:
-        cfg_options = data['config_options']
-    except KeyError:
-        return 'No \'config_options\' specified.'
-    
-    for channel_type in cfg_options:
-        print(channel_type)
-       # do the daq_commander part of the channel opt. 
-    daq_cmd.configure(device, **cfg_options)
+@control.route("/start", methods=["POST"])
+def start():
+    data = request.get_json
+    data = request.get_json()
+    device = data['device'] 
+    task_type = data['task']
+    options = data['options']
+    daq_cmd.configure(device, {task_type: options})
+    daq_cmd.start(device, [task])
     return jsonify(0)

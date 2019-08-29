@@ -15,4 +15,4 @@ socketio = SocketIO()
 socketio.init_app(app, message_queue="redis://")
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, debug=True)

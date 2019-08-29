@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ControlPanel from "./control-panel";
+import MainPane from "./main-pane";
 import "../css/main.css";
 
-ReactDOM.render(<ControlPanel/>, document.getElementById("content"));
+ReactDOM.render(<MainPane/>, document.getElementById("content"));
 
