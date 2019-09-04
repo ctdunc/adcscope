@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, jsonify, request
 from rejson import Client
-from tesdaq.command import DAQCommander
+import tesdaq.command as daq_cmd
+import tesdaq.query as query
+
 r = Client(decode_responses=True)
 control = Blueprint(
         "control",
@@ -9,7 +11,6 @@ control = Blueprint(
         template_folder='./view'
         )
 
-daq_cmd = DAQCommander(r)
 
 @control.route("/")
 def render():
@@ -17,15 +18,19 @@ def render():
 
 @control.route("/devices")
 def return_active():
-    return jsonify(daq_cmd.get_existing_devices())
+    res = query.get_existing_devices(r)
+    return jsonify(res)
 
 @control.route("/devices/<dev>", methods=["GET"])
 def return_device(dev):
-    return jsonify(daq_cmd.get_device_state(dev))
+    restriction = query.get_device_restriction(r, dev)
+    return jsonify(restriction)
 
+# TODO: Fix this
 @control.route("/devices/<dev>/<task>", methods=["GET"])
 def return_task(dev=None, task=None):
-    return jsonify(daq_cmd.get_device_state(dev)[task])
+    state = query.get_task_type(r,dev, task)
+    return jsonify(state)
 
 @control.route("/configure", methods=["POST"])
 def configure():
@@ -34,7 +39,7 @@ def configure():
     device = data['device'] 
     task_type = data['task']
     options = data['options']
-    daq_cmd.configure(device, {task_type: options})
+    daq_cmd.configure(r, device, {task_type: options})
     return jsonify(0)
 
 @control.route("/start", methods=["POST"])

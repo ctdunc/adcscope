@@ -16,19 +16,22 @@ export default class DeviceConfigContainer extends Component {
 	}
 
 	getTasksFromRDB(){
-		$.get(window.location.href+"devices/"+this.props.deviceName, (taskRestrictions) => {this.setState(taskRestrictions)});
+		$.get(window.location.href+"devices/"+this.props.deviceName, 
+			(taskRestrictions) => {
+				this.setState(taskRestrictions)});
 	}
 	
 	render(){
 		return(
 			<Accordion>
 			{Object.keys(this.state).map(key => {
+				console.log(key);
 				return(
 					<AccordionItem key={key} title={key}>
 					<TaskConfigForm 
 						taskName={key} 
 						deviceName={this.props.deviceName} 
-						taskRestriction={this.state[key].restriction} 
+						taskRestriction={this.state[key]} 
 					/>
 					</AccordionItem>
 				)
