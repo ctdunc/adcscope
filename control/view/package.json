@@ -18,7 +18,7 @@
     "babel-loader": "^8.0.6",
     "css-loader": "^3.1.0",
     "extract-text-webpack-plugin": "^3.0.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "mini-css-extract-plugin": "^0.8.0",
     "octicons": "^8.5.0",
     "octicons-react": "^0.18.4",
